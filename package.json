@@ -2,9 +2,15 @@
   "name": "dhcpd-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "npm run build",
+    "build": "tsc",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -15,5 +21,33 @@
   "bugs": {
     "url": "https://github.com/Foxh0und/dhcpd-node/issues"
   },
-  "homepage": "https://github.com/Foxh0und/dhcpd-node#readme"
+  "homepage": "https://github.com/Foxh0und/dhcpd-node#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.14",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
+    "codecov": "^3.7.2",
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^24.0.1",
+    "husky": "^4.3.0",
+    "jest": "^26.4.2",
+    "lint-staged": "10.4.0",
+    "prettier": "2.1.2",
+    "ts-jest": "^26.3.0",
+    "typescript": "^4.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }
