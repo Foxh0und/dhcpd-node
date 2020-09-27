@@ -1,35 +1,125 @@
-export const idRegex: RegExp = /^lease (.*) {$/;
-export const idPos: number = 1;
+import {
+  dateResolver,
+  bindingStateResolver,
+  hardwareResolver
+} from '../resolvers';
 
-export const startsRegex: RegExp = /^starts \d+ (.*);$/;
-export const startsPos: number = 1;
+export type RegExpField = {
+  field: string;
+  regex: RegExp;
+  position: number;
+  isExcluded?: boolean;
+  // eslint-disable-next-line no-unused-vars
+  resolve?: (value: string, regex: RegExp, idx: number) => any;
+};
 
-export const endsRegex: RegExp = /^ends \d+ (.*);$/;
-export const endsPos: number = 1;
+const id: RegExpField = {
+  field: 'id',
+  regex: /^lease (.*) {$/,
+  position: 1
+};
 
-export const clttRegex: RegExp = /^cltt \d+ (.*);$/;
-export const clttPos: number = 1;
+const starts: RegExpField = {
+  field: 'starts',
+  regex: /^starts \d+ (.*);$/,
+  position: 1,
+  resolve: dateResolver
+};
 
-export const atsfpRegex: RegExp = /^atsfp \d+ (.*);$/;
-export const atsfpPos: number = 1;
+const ends: RegExpField = {
+  field: 'ends',
+  regex: /^ends \d+ (.*);$/,
+  position: 1,
+  resolve: dateResolver
+};
 
-export const tstpRegex: RegExp = /^tstp \d+ (.*);$/;
-export const tstpPos: number = 1;
+const cltt: RegExpField = {
+  field: 'cltt',
+  regex: /^cltt \d+ (.*);$/,
+  position: 1,
+  resolve: dateResolver
+};
 
-export const tsfpRegex: RegExp = /^tsfp \d+ (.*);$/;
-export const tsfpPos: number = 1;
+const atsfp: RegExpField = {
+  field: 'atsfp',
+  regex: /^atsfp \d+ (.*);$/,
+  position: 1,
+  resolve: dateResolver
+};
 
-export const bindingStateRegex = /^binding state (free|active|abandoned)/;
-export const bindingStatePos = 1;
+const tstp: RegExpField = {
+  field: 'tstp',
+  regex: /^tstp \d+ (.*);$/,
+  position: 1,
+  resolve: dateResolver
+};
 
-export const hardwareRegex = /^hardware (ethernet) /;
-export const hardwarePos = 1;
+const tsfp: RegExpField = {
+  field: 'tsfp',
+  regex: /^tsfp \d+ (.*);$/,
+  position: 1,
+  resolve: dateResolver
+};
 
-export const macAddressRegex = /([0-9a-fA-F]{2}:){5}([0-9a-fA-F]){2}/;
-export const macAddressPos = 0;
+const bindingState: RegExpField = {
+  field: 'bindingState',
+  regex: /^binding state (free|active|abandoned)/,
+  position: 1,
+  resolve: bindingStateResolver
+};
 
-export const clientHostnameRegex = /^client-hostname "(.*?)"/;
-export const clientHostnamePos = 1;
+const hardware: RegExpField = {
+  field: 'hardware',
+  regex: /^hardware (ethernet) /,
+  position: 1,
+  resolve: hardwareResolver
+};
 
-export const uidRegex = /^uid "(.*?)"/;
-export const uidPos = 1;
+const clientHostname: RegExpField = {
+  field: 'clientHostname',
+  regex: /^client-hostname "(.*?)"/,
+  position: 1
+};
+
+/*
+    The client identifier is recorded as a colon-separated hexadecimal list or as a quoted string. 
+    If it is recorded as a quoted string and it contains one or more non-printable characters, 
+    those characters are represented as octal escapes - a backslash character followed by three octal digits. 
+    From `man dhcpd.leases(5)
+*/
+const uid: RegExpField = {
+  field: 'uid',
+  regex: /^uid (.*);/,
+  position: 1
+};
+
+const uidWithQuotes: RegExpField = {
+  field: 'uid',
+  regex: /^uid "(.*?)"/,
+  position: 1
+};
+
+const terminationChar: RegExpField = {
+  field: 'terminationChar',
+  isExcluded: true,
+  regex: /}/,
+  position: null
+};
+
+// Order is important here, terminate early, and for `alt` matchers like uid
+
+export const matchers = [
+  terminationChar,
+  id,
+  starts,
+  ends,
+  cltt,
+  atsfp,
+  tstp,
+  tsfp,
+  bindingState,
+  hardware,
+  clientHostname,
+  uidWithQuotes,
+  uid
+];
